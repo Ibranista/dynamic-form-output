@@ -44,13 +44,21 @@ function DynamicForm() {
     values[groupIndex].slots.push({ value: "" });
     setGroups(values);
   };
-
+  const handleSlotNumberChange = (e, groupIndex, slotIndex) => {
+    const values = [...groups];
+    values[groupIndex].slots[slotIndex].numberValue = e.target.value;
+    setGroups(values);
+  };
   const handleRemoveSlot = (groupIndex, slotIndex) => {
     const values = [...groups];
     values[groupIndex].slots.splice(slotIndex, 1);
     setGroups(values);
   };
-
+  const handleSlotTagChange = (e, groupIndex, slotIndex) => {
+    const values = [...groups];
+    values[groupIndex].slots[slotIndex].tagValue = e.target.value;
+    setGroups(values);
+  };
   return (
     <>
       <nav className="flex justify-between items-center bg-gray-100 p-3 px-10">
@@ -91,13 +99,18 @@ function DynamicForm() {
                   <span>#</span>Grupo
                 </h1>
                 <div className="flex gap-3  self-start mt-1 p-5">
-                  <button
+                  <motion.button
                     type="button"
                     onClick={() => handleRemoveGroup(groupIndex)}
                     className="bg-red-600 text-white rounded-sm w-8 h-8 flex items-center justify-center"
+                    title="remove group!"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ duration: 0.2 }}
+                    whileDrag={{ scale: 1.1 }}
                   >
                     <FontAwesomeIcon icon={faMinus} />
-                  </button>
+                  </motion.button>
                   <input
                     type="text"
                     value={group.value}
@@ -112,7 +125,7 @@ function DynamicForm() {
                 <h1 className="bg-white border-y-2 font-bold">Slot</h1>
                 {group.slots.map((slot, slotIndex) => (
                   <>
-                    <hr className=" bg-gray-400 mb-3 mt-1" />
+                    <hr className=" bg-gray-400 mt-1" />
                     <div key={slotIndex} className="flex gap-4 p-5">
                       <input
                         type="text"
@@ -125,23 +138,55 @@ function DynamicForm() {
                         }
                         className="h-8 rounded-md border-2 border-gray-300 w-full"
                       />
-                      <button
+                      <motion.button
                         type="button"
                         onClick={() => handleRemoveSlot(groupIndex, slotIndex)}
-                        className="bg-red-600 text-white rounded-sm w-6 h-6 flex items-center justify-center"
+                        className="bg-red-600 text-white rounded-sm w-8 h-8 flex items-center justify-center relative top-10"
+                        title="removeSlots"
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ duration: 0.2 }}
+                        whileDrag={{ scale: 1.1 }}
                       >
-                        <FontAwesomeIcon icon={faMinus} className="w-2" />
-                      </button>
+                        <FontAwesomeIcon icon={faMinus} className="w-3" />
+                      </motion.button>
+                    </div>
+                    <div key={slotIndex} className="flex gap-4 p-5">
+                      <input
+                        type="number"
+                        className="bg-gray-200 p-2 w-full mb-2 rounded-md"
+                        value={slot.numberValue}
+                        onChange={(e) =>
+                          handleSlotNumberChange(e, groupIndex, slotIndex)
+                        }
+                        placeholder="Expected Price in $"
+                      />
+                          <select
+                        className="bg-gray-200 p-2 w-full mb-2 rounded-md mr-10"
+                        value={slot.tagValue}
+                        onChange={(e) =>
+                          handleSlotTagChange(e, groupIndex, slotIndex)
+                        }
+                      >
+                        <option value="Tesla">Tesla</option>
+                        <option value="Executive">Executive</option>
+                        <option value="Isuzu">Isuzu</option>
+                      </select>
                     </div>
                   </>
                 ))}
-                <button
+                <motion.button
                   type="button"
                   onClick={() => handleAddSlot(groupIndex)}
                   className="mb-4 bg-[#00E4FF] text-white px-2 w-30 rounded-sm mt-5 ml-5 hover:bg-blue-600 active:bg-[#00E4FF]"
+                  title="Add Slot"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  whileDrag={{ scale: 1.1 }}
                 >
                   + Add Slot
-                </button>
+                </motion.button>
               </div>
             </div>
           ))}
@@ -150,6 +195,10 @@ function DynamicForm() {
               type="button"
               onClick={handleAddGroup}
               className="bg-blue-600 px-3 text-white rounded-sm hover:bg-blue-900 active:bg-blue-600"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              title="Add Group"
+
             >
               + Add Group
             </motion.button>
