@@ -2,10 +2,7 @@ import React, { forwardRef, useImperativeHandle } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCoffee as coffeeIconDefinition,
-  faMinus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faMinus } from "@fortawesome/free-solid-svg-icons";
 import styles from "./DynamicForm.module.css";
 // import framer motion
 import { motion, AnimatePresence } from "framer-motion";
@@ -222,7 +219,10 @@ const Modal = forwardRef((props, ref) => {
                   About the Creator
                 </h1>
                 <h1 className="text-xl mb-2"> Name: Ibrahim Kedir</h1>
-                <h1 className="text-xl mb-2"> Background: BSC in software engineering</h1>
+                <h1 className="text-xl mb-2">
+                  {" "}
+                  Background: BSC in software engineering
+                </h1>
                 <h1 className="text-xl mb-2"> Email: techofreact@gmail.com</h1>
                 <h1 className="text-xl mb-2">Phone: +251919892275</h1>
               </div>
