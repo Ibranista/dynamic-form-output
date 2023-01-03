@@ -153,7 +153,7 @@ function DynamicForm() {
   );
 }
 const Modal = forwardRef((props, ref) => {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(false);
 
   useImperativeHandle(ref, () => {
     return {
