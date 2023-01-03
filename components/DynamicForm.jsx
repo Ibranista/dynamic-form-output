@@ -11,12 +11,6 @@ function DynamicForm() {
     { name: "group 1", slots: [{ value: "" }], value: "" },
   ]);
 
-  const handleGroupChange = (e, groupIndex) => {
-    const values = [...groups];
-    values[groupIndex].name = e.target.value;
-    setGroups(values);
-  };
-
   const handleSlotChange = (e, groupIndex, slotIndex) => {
     const values = [...groups];
     values[groupIndex].slots[slotIndex].value = e.target.value;
@@ -45,7 +39,6 @@ function DynamicForm() {
 
   const handleAddSlot = (groupIndex) => {
     const values = [...groups];
-    const slotNumber = values[groupIndex].slots.length + 1;
     values[groupIndex].slots.push({ value: "" });
     setGroups(values);
   };
@@ -58,17 +51,17 @@ function DynamicForm() {
 
   return (
     <>
-      <div className=" border-2 border-gray-300 container m-auto">
+      <div className=" border-2 border-gray-300 container m-auto mt-2">
         <section className="bg-gray-300 p-2">Grupos / Slots</section>
-        <form className="mt-5">
+        <form className="mt-5 overflow-hidden">
           {groups.map((group, groupIndex) => (
-            <div key={groupIndex} className="flex  gap-5">
+            <div key={groupIndex} className="flex  gap-5 justify-between">
               {/* groups section */}
-              <div className="groupWrapper w-2/5">
-                <h1 className="flex gap-7 bg-white border-y-2">
+              <div className="groupWrapper w-2/5 ">
+                <h1 className="flex gap-7 bg-white border-y-2 w-[800px] font-bold">
                   <span>#</span>Grupo
                 </h1>
-                <div className="groups bg-orange-400 flex gap-3  self-start mt-1">
+                <div className="flex gap-3  self-start mt-1 p-5">
                   <button
                     type="button"
                     onClick={() => handleRemoveGroup(groupIndex)}
@@ -87,11 +80,11 @@ function DynamicForm() {
               </div>
               {/* slots section */}
               <div className="w-1/2">
-                <h1 className="bg-white border-y-2">Slot</h1>
+                <h1 className="bg-white border-y-2 font-bold">Slot</h1>
                 {group.slots.map((slot, slotIndex) => (
                   <>
                     <hr className=" bg-gray-400 mb-3 mt-1" />
-                    <div key={slotIndex} className="flex gap-4">
+                    <div key={slotIndex} className="flex gap-4 p-5">
                       <input
                         type="text"
                         value={slot.value}
@@ -116,16 +109,22 @@ function DynamicForm() {
                 <button
                   type="button"
                   onClick={() => handleAddSlot(groupIndex)}
-                  className="bg-blue-300 text-white px-2 w-30 rounded-sm mt-5"
+                  className="mb-4 bg-[#00E4FF] text-white px-2 w-30 rounded-sm mt-5 ml-5 hover:bg-blue-600 active:bg-[#00E4FF]"
                 >
                   + Add Slot
                 </button>
               </div>
             </div>
           ))}
-          <button type="button" onClick={handleAddGroup}>
-            Add Group
-          </button>
+          <section className="bg-gray-100 p-3">
+            <button
+              type="button"
+              onClick={handleAddGroup}
+              className="bg-blue-600 px-3 text-white rounded-sm hover:bg-blue-900 active:bg-blue-600"
+            >
+              + Add Group
+            </button>
+          </section>
         </form>
       </div>
     </>
