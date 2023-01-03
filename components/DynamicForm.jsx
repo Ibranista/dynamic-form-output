@@ -56,7 +56,7 @@ function DynamicForm() {
 
   return (
     <>
-      <nav className="flex justify-between items-center bg-gray-100 p-3">
+      <nav className="flex justify-between items-center bg-gray-100 p-3 px-10">
         <div className="flex gap-3 items-center">
           <img
             src="https://www.pngfind.com/pngs/m/530-5309946_to-google-forms-google-forms-logo-png-transparent.png"
@@ -219,7 +219,7 @@ const Modal = forwardRef((props, ref) => {
                 >
                   Close
                 </button>
-                <h1 className="font-bold text-2xl text-center">
+                <h1 className="font-bold text-2xl text-center mb-10">
                   About the Creator
                 </h1>
                 <h1 className="text-xl mb-2"> Name: Ibrahim Kedir</h1>
