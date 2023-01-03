@@ -88,7 +88,12 @@ function DynamicForm() {
         </div>
       </nav>
       <Modal ref={modalRef} />
-      <div className=" border-2 border-gray-300 container m-auto mt-2">
+      <motion.div className=" border-2 border-gray-300 container m-auto mt-2" 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+      >
         <section className="bg-gray-300 p-2">Grupos / Slots</section>
         <form className="mt-5 overflow-hidden">
           {groups.map((group, groupIndex) => (
@@ -161,7 +166,7 @@ function DynamicForm() {
                         }
                         placeholder="Expected Price in $"
                       />
-                          <select
+                      <select
                         className="bg-gray-200 p-2 w-full mb-2 rounded-md mr-10"
                         value={slot.tagValue}
                         onChange={(e) =>
@@ -198,13 +203,12 @@ function DynamicForm() {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               title="Add Group"
-
             >
               + Add Group
             </motion.button>
           </section>
         </form>
-      </div>
+      </motion.div>
     </>
   );
 }
