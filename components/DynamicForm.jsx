@@ -66,6 +66,7 @@ function DynamicForm() {
           <a
             href="https://github.com/Ibranista/DynamicForms/blob/main/README.md"
             className="bg-slate-500 text-white px-2 w-30 rounded-sm mt-5 ml-5 hover:bg-blue-600 active:bg-slate-500"
+            target="_blank"
           >
             Documentation
           </a>
