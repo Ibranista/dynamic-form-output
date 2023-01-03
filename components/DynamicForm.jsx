@@ -224,6 +224,7 @@ const Modal = forwardRef((props, ref) => {
                   Background: BSC in software engineering
                 </h1>
                 <h1 className="text-xl mb-2"> Email: techofreact@gmail.com</h1>
+                <h1 className="text-xl mb-2"> Email: javascriptlearner3@gmail.com</h1>
                 <h1 className="text-xl mb-2">Phone: +251919892275</h1>
               </div>
             </motion.div>
