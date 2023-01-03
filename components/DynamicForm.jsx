@@ -212,7 +212,6 @@ const Modal = forwardRef((props, ref) => {
             >
               {props.children}
               <div>
-                {/* add fontawesome close icon */}
                 <button
                   onClick={handleClose}
                   className="bg-red-600 text-white px-2 w-30 rounded-sm mt-5 ml-5 hover:bg-blue-600 active:bg-red-600"
