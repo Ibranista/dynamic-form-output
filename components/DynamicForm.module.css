@@ -9,8 +9,8 @@
 
 .modalContentWrapper {
   position: fixed;
-  width: 700px;
   height: 700px;
+  width: 80%;
   background: white;
   margin: auto;
   inset: 0;

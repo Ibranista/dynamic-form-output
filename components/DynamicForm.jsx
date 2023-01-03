@@ -58,11 +58,17 @@ function DynamicForm() {
           <img
             src="https://www.pngfind.com/pngs/m/530-5309946_to-google-forms-google-forms-logo-png-transparent.png"
             alt="logo"
-            className="w-10"
+            className="w-10 cursor-pointer"
           />
-          <h1 className="text-2xl font-bold">Dynamic Form</h1>
+          <h1 className="text-2xl font-bold cursor-pointer">Dynamic Form</h1>
         </div>
         <div className="flex gap-3 items-center">
+          <a
+            href="https://github.com/Ibranista/DynamicForms"
+            className="bg-slate-500 text-white px-2 w-30 rounded-sm mt-5 ml-5 hover:bg-blue-600 active:bg-slate-500"
+          >
+            Documentation
+          </a>
           <button
             type="button"
             onClick={() => modalRef.current.showModal()}
@@ -218,14 +224,22 @@ const Modal = forwardRef((props, ref) => {
                 <h1 className="font-bold text-2xl text-center mb-10">
                   About the Creator
                 </h1>
-                <h1 className="text-xl mb-2"> Name: Ibrahim Kedir</h1>
-                <h1 className="text-xl mb-2">
-                  {" "}
-                  Background: BSC in software engineering
-                </h1>
-                <h1 className="text-xl mb-2"> Email: techofreact@gmail.com</h1>
-                <h1 className="text-xl mb-2"> Email: javascriptlearner3@gmail.com</h1>
-                <h1 className="text-xl mb-2">Phone: +251919892275</h1>
+                <div className="author-details text-center">
+                  <h1 className="text-xl mb-2"> Name: Ibrahim Kedir</h1>
+                  <h1 className="text-xl mb-2">
+                    {" "}
+                    Background: BSC in software engineering
+                  </h1>
+                  <h1 className="text-xl mb-2">
+                    {" "}
+                    Email: techofreact@gmail.com
+                  </h1>
+                  <h1 className="text-xl mb-2">
+                    {" "}
+                    Email: javascriptlearner3@gmail.com
+                  </h1>
+                  <h1 className="text-xl mb-2">Phone: +251919892275</h1>
+                </div>
               </div>
             </motion.div>
           </motion.div>
