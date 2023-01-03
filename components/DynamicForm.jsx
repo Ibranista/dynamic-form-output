@@ -1,12 +1,17 @@
-import React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { useState } from "react";
+import { useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCoffee as coffeeIconDefinition,
   faMinus,
 } from "@fortawesome/free-solid-svg-icons";
+import styles from "./DynamicForm.module.css";
+// import framer motion
+import { motion, AnimatePresence } from "framer-motion";
 
 function DynamicForm() {
+  const modalRef = useRef();
   const [groups, setGroups] = useState([
     { name: "group 1", slots: [{ value: "" }], value: "" },
   ]);
@@ -51,6 +56,26 @@ function DynamicForm() {
 
   return (
     <>
+      <nav className="flex justify-between items-center bg-gray-100 p-3">
+        <div className="flex gap-3 items-center">
+          <img
+            src="https://www.pngfind.com/pngs/m/530-5309946_to-google-forms-google-forms-logo-png-transparent.png"
+            alt="logo"
+            className="w-10"
+          />
+          <h1 className="text-2xl font-bold">Dynamic Form</h1>
+        </div>
+        <div className="flex gap-3 items-center">
+          <button
+            type="button"
+            onClick={() => modalRef.current.showModal()}
+            className="bg-slate-500 text-white px-2 w-30 rounded-sm mt-5 ml-5 hover:bg-blue-600 active:bg-slate-500"
+          >
+            About
+          </button>
+        </div>
+      </nav>
+      <Modal ref={modalRef} />
       <div className=" border-2 border-gray-300 container m-auto mt-2">
         <section className="bg-gray-300 p-2">Grupos / Slots</section>
         <form className="mt-5 overflow-hidden">
@@ -117,18 +142,96 @@ function DynamicForm() {
             </div>
           ))}
           <section className="bg-gray-100 p-3">
-            <button
+            <motion.button
               type="button"
               onClick={handleAddGroup}
               className="bg-blue-600 px-3 text-white rounded-sm hover:bg-blue-900 active:bg-blue-600"
             >
               + Add Group
-            </button>
+            </motion.button>
           </section>
         </form>
       </div>
     </>
   );
 }
+const Modal = forwardRef((props, ref) => {
+  const [show, setShow] = useState(true);
 
+  useImperativeHandle(ref, () => {
+    return {
+      showModal: () => setShow(true),
+      hideModal: () => setShow(false),
+    };
+  });
+
+  const handleClose = () => {
+    setShow(false);
+  };
+
+  return (
+    <AnimatePresence>
+      {show && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={handleClose}
+            className={styles.modalBackdrop}
+          />
+          <motion.div
+            initial={{
+              scale: 0,
+            }}
+            animate={{
+              scale: 1,
+            }}
+            exit={{
+              scale: 0,
+            }}
+            className={styles.modalContentWrapper}
+          >
+            <motion.div
+              initial={{
+                x: 100,
+              }}
+              animate={{
+                x: 0,
+              }}
+              exit={{
+                x: 100,
+                transition: {
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                },
+                opacity: 0,
+              }}
+              className="modal-content"
+            >
+              {props.children}
+              <div>
+                {/* add fontawesome close icon */}
+                <button
+                  onClick={handleClose}
+                  className="bg-red-600 text-white px-2 w-30 rounded-sm mt-5 ml-5 hover:bg-blue-600 active:bg-red-600"
+                >
+                  Close
+                </button>
+                <h1 className="font-bold text-2xl text-center">
+                  About the Creator
+                </h1>
+                <h1 className="text-xl mb-2"> Name: Ibrahim Kedir</h1>
+                <h1 className="text-xl mb-2"> Background: BSC in software engineering</h1>
+                <h1 className="text-xl mb-2"> Email: techofreact@gmail.com</h1>
+                <h1 className="text-xl mb-2">Phone: +251919892275</h1>
+              </div>
+            </motion.div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+});
 export default DynamicForm;
