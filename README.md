@@ -26,7 +26,7 @@
 
 <!-- PROJECT DESCRIPTION -->
 
-# 📖 [your_project_name] <a name="about-project"></a>
+# 📖 [Dynamic Forms with Outputs] <a name="about-project"></a>
 
 **[Dynamic Forms Website]** is a website created to illustrate how to create dynamic forms. This forms can help you implement student registration, point of sell and so much more. **
 
@@ -46,8 +46,6 @@
 <!-- LIVE DEMO -->
 
 ## 🚀 Live Demo <a name="live-demo"></a>
-
-> Add a link to your deployed project.
 
 - [Live Demo Link](https://dynamic-form-output.vercel.app/)
 
