@@ -2,20 +2,30 @@ import React, { forwardRef, useImperativeHandle } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import styles from "./DynamicForm.module.css";
+import { useEffect } from "react";
 // import framer motion
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, delay } from "framer-motion";
 
 function DynamicForm() {
   const modalRef = useRef();
   // hooks
+
   const [submitted, setSubmitted] = useState(false);
   const [inputs, setInputs] = useState([{ a: "", b: "" }]);
   const [values, setValues] = useState([]);
   const [groups, setGroups] = useState([
     { title: "", captions: [{ c: "", v: "" }] },
   ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+  }, []);
+
   const [title, setTitle] = useState("");
 
   const titleHandle = (e) => {
@@ -79,6 +89,34 @@ function DynamicForm() {
     newGroups.splice(groupIndex, 1);
     setGroups(newGroups);
   };
+  // loading animation
+
+  if (loading) {
+    return (
+      <>
+        {/* spinner animaation using framer motion */}
+        <motion.div
+          className="flex justify-center items-center h-screen"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ease:"easeIn", duration: 4 }
+        }
+        >
+          <div className="flex flex-col justify-center items-center">
+            <div className="flex justify-center items-center">
+              {/* add fontawesome spinner icon */}
+              <FontAwesomeIcon
+                icon={faSpinner}
+                className="animate-spin text-5xl text-slate-500"
+              />
+            </div>
+            <h1 className="text-2xl font-bold mt-2">Final Exam</h1>
+          </div>
+        </motion.div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -93,7 +131,7 @@ function DynamicForm() {
         </div>
         <div className="flex gap-3 items-center">
           <a
-            href="https://github.com/Ibranista/DynamicForms/blob/main/README.md"
+            href="https://github.com/Ibranista/dynamic-form-output#readme"
             className="bg-slate-500 text-white px-2 w-30 rounded-sm mt-5 ml-5 hover:bg-blue-600 active:bg-slate-500"
             target="_blank"
           >
@@ -274,10 +312,15 @@ function DynamicForm() {
               {groups.length > 0 ? (
                 groups.map((group, groupIndex) => (
                   <div key={groupIndex}>
-                    <h1 className="font-bold mb-2 mt-2">{`G${groupIndex + 1}: ${group.title}`}</h1>
+                    <h1 className="font-bold mb-2 mt-2">{`G${groupIndex + 1}: ${
+                      group.title
+                    }`}</h1>
 
                     {group.captions.map((caption, captionIndex) => (
-                      <div key={captionIndex} className="border-2 border-blue-600 p-2">
+                      <div
+                        key={captionIndex}
+                        className="border-2 border-blue-600 p-2"
+                      >
                         <h1>{`C${captionIndex + 1}: ${caption.c}`}</h1>
                         <h1>{`V${captionIndex + 1}: ${caption.v}`}</h1>
                       </div>
