@@ -9,56 +9,77 @@ import { motion, AnimatePresence } from "framer-motion";
 
 function DynamicForm() {
   const modalRef = useRef();
+  // hooks
+  const [submitted, setSubmitted] = useState(false);
+  const [inputs, setInputs] = useState([{ a: "", b: "" }]);
+  const [values, setValues] = useState([]);
   const [groups, setGroups] = useState([
-    { name: "group 1", slots: [{ value: "" }], value: "" },
+    { title: "", captions: [{ c: "", v: "" }] },
   ]);
+  const [title, setTitle] = useState("");
 
-  const handleSlotChange = (e, groupIndex, slotIndex) => {
-    const values = [...groups];
-    values[groupIndex].slots[slotIndex].value = e.target.value;
-    setGroups(values);
+  const titleHandle = (e) => {
+    setTitle(e.target.value);
   };
 
-  const handleGroupInputChange = (e, groupIndex) => {
-    const values = [...groups];
-    values[groupIndex].value = e.target.value;
-    setGroups(values);
+  const handleAddInput = () => {
+    const newInputs = [...inputs, { a: "", b: "" }];
+    setInputs(newInputs);
+  };
+
+  const handleAddCaption = (groupIndex) => {
+    const newGroups = [...groups];
+    newGroups[groupIndex].captions.push({ c: "", v: "" });
+    setGroups(newGroups);
   };
 
   const handleAddGroup = () => {
-    const groupNumber = groups.length + 1;
-    setGroups([
-      ...groups,
-      { name: `group ${groupNumber}`, slots: [{ value: "" }], value: "" },
-    ]);
+    const newGroups = [...groups, { title: "", captions: [{ c: "", v: "" }] }];
+    setGroups(newGroups);
   };
 
-  const handleRemoveGroup = (groupIndex) => {
-    const values = [...groups];
-    values.splice(groupIndex, 1);
-    setGroups(values);
+  const handleChange = (e, index, field) => {
+    const newInputs = [...inputs];
+    newInputs[index][field] = e.target.value;
+    setInputs(newInputs);
   };
 
-  const handleAddSlot = (groupIndex) => {
-    const values = [...groups];
-    values[groupIndex].slots.push({ value: "" });
-    setGroups(values);
+  const handleChangeGroup = (e, groupIndex, captionIndex = null, field) => {
+    const newGroups = [...groups];
+    if (captionIndex !== null) {
+      newGroups[groupIndex].captions[captionIndex][field] = e.target.value;
+    } else {
+      newGroups[groupIndex][field] = e.target.value;
+    }
+    setGroups(newGroups);
   };
-  const handleSlotNumberChange = (e, groupIndex, slotIndex) => {
-    const values = [...groups];
-    values[groupIndex].slots[slotIndex].numberValue = e.target.value;
-    setGroups(values);
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    setValues(inputs.map((input) => ({ a: input.a, b: input.b })));
+    setGroups(
+      groups.map((group) => ({
+        title: group.title,
+        captions: group.captions.map((caption) => ({
+          c: caption.c,
+          v: caption.v,
+        })),
+      }))
+    );
   };
-  const handleRemoveSlot = (groupIndex, slotIndex) => {
-    const values = [...groups];
-    values[groupIndex].slots.splice(slotIndex, 1);
-    setGroups(values);
+
+  const handleDeleteInput = (index) => {
+    const newInputs = [...inputs];
+    newInputs.splice(index, 1);
+    setInputs(newInputs);
   };
-  const handleSlotTagChange = (e, groupIndex, slotIndex) => {
-    const values = [...groups];
-    values[groupIndex].slots[slotIndex].tagValue = e.target.value;
-    setGroups(values);
+
+  const handleDeleteGroup = (groupIndex) => {
+    const newGroups = [...groups];
+    newGroups.splice(groupIndex, 1);
+    setGroups(newGroups);
   };
+
   return (
     <>
       <nav className="flex justify-between items-center bg-gray-100 p-3 px-10">
@@ -88,126 +109,189 @@ function DynamicForm() {
         </div>
       </nav>
       <Modal ref={modalRef} />
-      <motion.div className=" border-2 border-gray-300 container m-auto mt-2" 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
+      <h1 className="font-bold text-center p-2">
+        Nested Dynamic Form Final Question
+      </h1>
+      <motion.div
+        className="sm:flex border-2 border-gray-300 container m-auto mt-2 mb-5"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
       >
-        <section className="bg-gray-300 p-2">Grupos / Slots</section>
-        <form className="mt-5 overflow-hidden">
-          {groups.map((group, groupIndex) => (
-            <div key={groupIndex} className="flex  gap-5 justify-between">
-              {/* groups section */}
-              <div className="groupWrapper w-2/5 ">
-                <h1 className="flex gap-7 bg-white border-y-2 w-[800px] font-bold">
-                  <span>#</span>Grupo
-                </h1>
-                <div className="flex gap-3  self-start mt-1 p-5">
-                  <motion.button
-                    type="button"
-                    onClick={() => handleRemoveGroup(groupIndex)}
-                    className="bg-red-600 text-white rounded-sm w-8 h-8 flex items-center justify-center"
-                    title="remove group!"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ duration: 0.2 }}
-                    whileDrag={{ scale: 1.1 }}
-                  >
-                    <FontAwesomeIcon icon={faMinus} />
-                  </motion.button>
-                  <input
-                    type="text"
-                    value={group.value}
-                    placeholder={`${group.name} `}
-                    onChange={(e) => handleGroupInputChange(e, groupIndex)}
-                    className="h-8 rounded-sm border-2 border-gray-300 w-full"
-                  />
-                </div>
-              </div>
-              {/* slots section */}
-              <div className="w-1/2">
-                <h1 className="bg-white border-y-2 font-bold">Slot</h1>
-                {group.slots.map((slot, slotIndex) => (
-                  <>
-                    <hr className=" bg-gray-400 mt-1" />
-                    <div key={slotIndex} className="flex gap-4 p-5">
-                      <input
-                        type="text"
-                        value={slot.value}
-                        placeholder={`g${group.name.slice(5)}_slot ${
-                          slotIndex + 1
-                        }`}
-                        onChange={(e) =>
-                          handleSlotChange(e, groupIndex, slotIndex)
-                        }
-                        className="h-8 rounded-md border-2 border-gray-300 w-full"
-                      />
-                      <motion.button
-                        type="button"
-                        onClick={() => handleRemoveSlot(groupIndex, slotIndex)}
-                        className="bg-red-600 text-white rounded-sm w-8 h-8 flex items-center justify-center relative top-10"
-                        title="removeSlots"
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        transition={{ duration: 0.2 }}
-                        whileDrag={{ scale: 1.1 }}
-                      >
-                        <FontAwesomeIcon icon={faMinus} className="w-3" />
-                      </motion.button>
-                    </div>
-                    <div key={slotIndex} className="flex gap-4 p-5">
-                      <input
-                        type="number"
-                        className="bg-gray-200 p-2 w-full mb-2 rounded-md"
-                        value={slot.numberValue}
-                        onChange={(e) =>
-                          handleSlotNumberChange(e, groupIndex, slotIndex)
-                        }
-                        placeholder="Expected Price in $"
-                      />
-                      <select
-                        className="bg-gray-200 p-2 w-full mb-2 rounded-md mr-10"
-                        value={slot.tagValue}
-                        onChange={(e) =>
-                          handleSlotTagChange(e, groupIndex, slotIndex)
-                        }
-                      >
-                        <option value="Tesla">Tesla</option>
-                        <option value="Executive">Executive</option>
-                        <option value="Isuzu">Isuzu</option>
-                      </select>
-                    </div>
-                  </>
-                ))}
+        <div className="form-wrapper sm:w-1/2">
+          {/* A&B */}
+          <section className="bg-gray-200 p-5 flex justify-center">
+            <input
+              type="text"
+              placeholder="example: Eye Clinic"
+              onChange={titleHandle}
+              value={title}
+              className="w-2/3 rounded-md border-2 border-gray-300 p-2 h-9 ml-8
+              "
+            />
+          </section>
+          <h2 className="font-bold ml-36 py-2">A&B</h2>
+          <section className="bg-gray-200 p-5">
+            {inputs.map((input, index) => (
+              <div key={index} className="flex gap-5 justify-center">
+                <input
+                  placeholder={`A${index + 1}`}
+                  value={input.a}
+                  onChange={(e) => handleChange(e, index, "a")}
+                  className="p-2 border-2 border-gray-300 rounded-md mb-3 w-1/4"
+                />
+                <input
+                  placeholder={`B${index + 1}`}
+                  value={input.b}
+                  onChange={(e) => handleChange(e, index, "b")}
+                  className="p-2 border-2 border-gray-300 rounded-md mb-3 w-1/4"
+                />
                 <motion.button
                   type="button"
-                  onClick={() => handleAddSlot(groupIndex)}
-                  className="mb-4 bg-[#00E4FF] text-white px-2 w-30 rounded-sm mt-5 ml-5 hover:bg-blue-600 active:bg-[#00E4FF]"
-                  title="Add Slot"
+                  onClick={() => handleDeleteInput(index)}
+                  className="bg-red-600 text-white rounded-sm w-8 h-8 flex items-center justify-center relative top-2"
+                  title="removeSlots"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.2 }}
                   whileDrag={{ scale: 1.1 }}
                 >
-                  + Add Slot
+                  <FontAwesomeIcon icon={faMinus} className="w-3" />
                 </motion.button>
               </div>
-            </div>
-          ))}
-          <section className="bg-gray-100 p-3">
+            ))}
             <motion.button
-              type="button"
-              onClick={handleAddGroup}
-              className="bg-blue-600 px-3 text-white rounded-sm hover:bg-blue-900 active:bg-blue-600"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              title="Add Group"
+              transition={{ duration: 0.2 }}
+              whileDrag={{ scale: 1.1 }}
+              onClick={handleAddInput}
+              className="bg-blue-600 text-white rounded-sm w-fit px-3 flex items-center relative top-2 left-[80%]"
             >
-              + Add Group
+              Add A&B
             </motion.button>
           </section>
-        </form>
+          {/* groups */}
+          <h2 className="font-bold ml-36 py-2">Groups</h2>
+          <section className="bg-gray-200 p-5">
+            {groups.map((group, groupIndex) => (
+              <div key={groupIndex} className="bg-white w-full">
+                <div className="flex justify-center bg-gray-200">
+                  <input
+                    placeholder={`G${groupIndex + 1}`}
+                    value={group.title}
+                    onChange={(e) =>
+                      handleChangeGroup(e, groupIndex, null, "title")
+                    }
+                    className="w-[65%] rounded-md border-2 border-gray-300 p-2 h-9 ml-8 mb-3 "
+                  />
+                </div>
+                <h1 className="font-bold mb-3 ml-28">Captions</h1>
+                {group.captions.map((caption, captionIndex) => (
+                  <div key={captionIndex} className="flex gap-5 justify-center">
+                    <input
+                      placeholder={`C${captionIndex + 1}`}
+                      value={caption.c}
+                      onChange={(e) =>
+                        handleChangeGroup(e, groupIndex, captionIndex, "c")
+                      }
+                      className="p-2 rounded-md mb-3 w-1/4 bg-gray-200"
+                    />
+                    <input
+                      placeholder={`V${captionIndex + 1}`}
+                      value={caption.v}
+                      onChange={(e) =>
+                        handleChangeGroup(e, groupIndex, captionIndex, "v")
+                      }
+                      className="p-2 rounded-md mb-3 w-1/4 bg-gray-200"
+                    />
+                  </div>
+                ))}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  whileDrag={{ scale: 1.1 }}
+                  onClick={() => handleAddCaption(groupIndex)}
+                  className="bg-blue-600 text-white rounded-sm w-fit px-3 flex items-center relative top-2 left-[80%] mb-5"
+                >
+                  Add C&V
+                </motion.button>
+
+                <motion.button
+                  onClick={() => handleDeleteGroup(groupIndex)}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.2 }}
+                  whileDrag={{ scale: 1.1 }}
+                  className="bg-red-600 text-white rounded-sm w-fit px-3 flex items-center relative mb-2"
+                >
+                  Delete Group
+                </motion.button>
+              </div>
+            ))}
+            <motion.button
+              onClick={handleAddGroup}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              whileDrag={{ scale: 1.1 }}
+              className="bg-blue-600 text-white rounded-sm w-fit px-3 flex items-center relative left-36"
+            >
+              Add Group
+            </motion.button>
+            {/* submission and displaying */}
+          </section>
+          <motion.button
+            onClick={handleSubmit}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+            whileDrag={{ scale: 1.1 }}
+            className="bg-blue-600 text-white rounded-sm w-fit px-5 flex items-center relative left-36 mt-5 py-2 mb-3"
+          >
+            Submit
+          </motion.button>
+        </div>
+        <div className="display-screen p-5 w-1/2 border-2 border-black">
+          <h1 className="text-2xl font-bold text-center">Form Output</h1>
+          {submitted ? (
+            <div>
+              <h1 className="font-bold text-xl p-2">{title}</h1>
+
+              {values.length > 0 ? (
+                values.map((value, index) => (
+                  <div key={index} className="border-2 border-blue-600 p-2">
+                    <h1>{`A${index + 1}: ${value.a}`}</h1>
+                    <h1>{`B${index + 1}: ${value.b}`}</h1>
+                  </div>
+                ))
+              ) : (
+                <h1>No values are submitted!</h1>
+              )}
+
+              {groups.length > 0 ? (
+                groups.map((group, groupIndex) => (
+                  <div key={groupIndex}>
+                    <h1 className="font-bold mb-2 mt-2">{`G${groupIndex + 1}: ${group.title}`}</h1>
+
+                    {group.captions.map((caption, captionIndex) => (
+                      <div key={captionIndex} className="border-2 border-blue-600 p-2">
+                        <h1>{`C${captionIndex + 1}: ${caption.c}`}</h1>
+                        <h1>{`V${captionIndex + 1}: ${caption.v}`}</h1>
+                      </div>
+                    ))}
+                  </div>
+                ))
+              ) : (
+                <h1>No groups are submitted!</h1>
+              )}
+            </div>
+          ) : (
+            <h1>No values submitted yet</h1>
+          )}
+        </div>
       </motion.div>
     </>
   );
