@@ -89,12 +89,10 @@ function DynamicForm() {
     newGroups.splice(groupIndex, 1);
     setGroups(newGroups);
   };
-  // loading animation
 
   if (loading) {
     return (
       <>
-        {/* spinner animaation using framer motion */}
         <motion.div
           className="flex justify-center items-center h-screen"
           initial={{ opacity: 0 }}
@@ -105,7 +103,6 @@ function DynamicForm() {
         >
           <div className="flex flex-col justify-center items-center">
             <div className="flex justify-center items-center">
-              {/* add fontawesome spinner icon */}
               <FontAwesomeIcon
                 icon={faSpinner}
                 className="animate-spin text-5xl text-slate-500"
