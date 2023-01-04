@@ -64,7 +64,8 @@ function DynamicForm() {
     setGroups(newGroups);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     setSubmitted(true);
     setValues(inputs.map((input) => ({ a: input.a, b: input.b })));
     setGroups(
@@ -154,7 +155,7 @@ function DynamicForm() {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="form-wrapper sm:w-1/2">
+        <form className="form-wrapper sm:w-1/2" onSubmit={handleSubmit}>
           {/* A&B */}
           <section className="bg-gray-200 p-5 flex justify-center">
             <input
@@ -279,7 +280,7 @@ function DynamicForm() {
             {/* submission and displaying */}
           </section>
           <motion.button
-            onClick={handleSubmit}
+            type="submit"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             transition={{ duration: 0.2 }}
@@ -288,7 +289,7 @@ function DynamicForm() {
           >
             Submit
           </motion.button>
-        </div>
+        </form>
         <div className="display-screen p-5 w-1/2 border-2 border-black">
           <h1 className="text-2xl font-bold text-center">Form Output</h1>
           {submitted ? (
