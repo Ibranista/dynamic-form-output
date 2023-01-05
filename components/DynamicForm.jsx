@@ -329,39 +329,39 @@ function DynamicForm() {
                     </motion.button>
                   </div>
                 ))}
-                <motion.button
+                <motion.div
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.2 }}
                   whileDrag={{ scale: 1.1 }}
                   onClick={() => addCVPair(groupIndex)}
-                  className="bg-blue-600 text-white rounded-sm w-fit px-3 flex items-center relative top-2 left-[80%] mb-5"
+                  className="bg-blue-600 text-white rounded-sm w-fit px-3 flex items-center relative top-2 left-[80%] mb-5 cursor-pointer"
                 >
                   Add C&V
-                </motion.button>
+                </motion.div>
 
-                <motion.button
+                <motion.div
                   onClick={() => deleteGroup(groupIndex)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.2 }}
                   whileDrag={{ scale: 1.1 }}
-                  className="bg-red-600 text-white rounded-sm w-fit px-3 flex items-center relative mb-2"
+                  className="bg-red-600 text-white rounded-sm w-fit px-3 flex items-center relative mb-2 cursor-pointer"
                 >
                   Delete Group
-                </motion.button>
+                </motion.div>
               </div>
             ))}
-            <motion.button
+            <motion.div
               onClick={addGroup}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               transition={{ duration: 0.2 }}
               whileDrag={{ scale: 1.1 }}
-              className="bg-blue-600 text-white rounded-sm w-fit px-3 flex items-center relative left-36"
+              className="bg-blue-600 text-white rounded-sm w-fit px-3 flex items-center relative left-36 cursor-pointer"
             >
               Add Group
-            </motion.button>
+            </motion.div>
           </section>
           <motion.button
             type="submit"
