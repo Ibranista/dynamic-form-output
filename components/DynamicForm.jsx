@@ -221,14 +221,14 @@ function DynamicForm() {
             <motion.button
               type="button"
               onClick={() => setFormData({ ...formData, title: "" })}
-              className="bg-red-600 text-white rounded-sm w-8 h-8 flex items-center justify-center relative top-2"
+              className="bg-red-600 text-white rounded-sm w-fit p-2 h-8 flex items-center justify-center relative top-1"
               title="removeSlots"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               transition={{ duration: 0.2 }}
               whileDrag={{ scale: 1.1 }}
             >
-              <FontAwesomeIcon icon={faMinus} className="w-3" />
+              reset title
             </motion.button>
           </section>
           <h1 className="font-bold ml-36 py-2">A&B</h1>
