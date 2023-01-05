@@ -5,117 +5,139 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import styles from "./DynamicForm.module.css";
 import { useEffect } from "react";
+import localStorage from "localstorage-memory";
 // import framer motion
 import { motion, AnimatePresence, delay } from "framer-motion";
 
 function DynamicForm() {
   const modalRef = useRef();
   // hooks
-
+  const [formData, setFormData] = useState({
+    title: "",
+    abPairs: [{ a: "", b: "" }],
+    groups: [{ g: "", cvPairs: [{ c: "", v: "" }] }],
+  });
   const [submitted, setSubmitted] = useState(false);
-  const [inputs, setInputs] = useState([{ a: "", b: "" }]);
-  const [values, setValues] = useState([]);
-  const [groups, setGroups] = useState([
-    { title: "", captions: [{ c: "", v: "" }] },
-  ]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoading(false);
-    }, 5000);
-  }, []);
-
-  const [title, setTitle] = useState("");
-
-  const titleHandle = (e) => {
-    setTitle(e.target.value);
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    // split the name by '.' to get the keys for the formData object
+    const keys = name.split(".");
+    // update the value at the specified key in the formData object
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [keys[0]]:
+        keys.length > 1
+          ? keys[0] === "abPairs" // check if the field is 'abPairs'
+            ? [...prevFormData[keys[0]]].map((pair, index) => {
+                // update the value at the specified index
+                return index === Number(keys[1])
+                  ? { ...pair, [keys[2]]: value }
+                  : pair;
+              })
+            : {
+                ...prevFormData[keys[0]],
+                [keys[1]]:
+                  keys.length > 2
+                    ? {
+                        ...prevFormData[keys[0]][keys[1]],
+                        [keys[2]]: value,
+                      }
+                    : value,
+              }
+          : value,
+    }));
+  };
+  const handleGroupChange = (event) => {
+    const { name, value } = event.target;
+    // split the name by '.' to get the keys for the formData object
+    const keys = name.split(".");
+    // update the value at the specified key in the formData object
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [keys[0]]:
+        keys.length > 1
+          ? keys[0] === "groups" // check if the field is 'groups'
+            ? [...prevFormData[keys[0]]].map((group, groupIndex) => {
+                // update the value at the specified index
+                return groupIndex === Number(keys[1])
+                  ? {
+                      ...group,
+                      [keys[2]]:
+                        keys.length > 3
+                          ? [...group[keys[2]]].map((pair, pairIndex) => {
+                              // update the value at the specified index
+                              return pairIndex === Number(keys[3])
+                                ? { ...pair, [keys[4]]: value }
+                                : pair;
+                            })
+                          : value,
+                    }
+                  : group;
+              })
+            : {
+                ...prevFormData[keys[0]],
+                [keys[1]]:
+                  keys.length > 2
+                    ? {
+                        ...prevFormData[keys[0]][keys[1]],
+                        [keys[2]]: value,
+                      }
+                    : value,
+              }
+          : value,
+    }));
+  };
+  const deleteABPair = (index) => {
+    const newABPairs = [...formData.abPairs];
+    newABPairs.splice(index, 1);
+    setFormData({ ...formData, abPairs: newABPairs });
   };
 
-  const handleAddInput = () => {
-    const newInputs = [...inputs, { a: "", b: "" }];
-    setInputs(newInputs);
+  const addABPair = () => {
+    setFormData({
+      ...formData,
+      abPairs: [...formData.abPairs, { a: "", b: "" }],
+    });
   };
 
-  const handleAddCaption = (groupIndex) => {
-    const newGroups = [...groups];
-    newGroups[groupIndex].captions.push({ c: "", v: "" });
-    setGroups(newGroups);
+  const deleteCVPair = (groupIndex, pairIndex) => {
+    const newGroups = [...formData.groups];
+    const newCVPairs = [...newGroups[groupIndex].cvPairs];
+    newCVPairs.splice(pairIndex, 1);
+    newGroups[groupIndex] = { ...newGroups[groupIndex], cvPairs: newCVPairs };
+    setFormData({ ...formData, groups: newGroups });
   };
 
-  const handleAddGroup = () => {
-    const newGroups = [...groups, { title: "", captions: [{ c: "", v: "" }] }];
-    setGroups(newGroups);
+  const addCVPair = (groupIndex) => {
+    const newGroups = [...formData.groups];
+    newGroups[groupIndex] = {
+      ...newGroups[groupIndex],
+      cvPairs: [...newGroups[groupIndex].cvPairs, { c: "", v: "" }],
+    };
+    setFormData({ ...formData, groups: newGroups });
   };
 
-  const handleChange = (e, index, field) => {
-    const newInputs = [...inputs];
-    newInputs[index][field] = e.target.value;
-    setInputs(newInputs);
+  const deleteGroup = (index) => {
+    const newGroups = [...formData.groups];
+    newGroups.splice(index, 1);
+    setFormData({ ...formData, groups: newGroups });
   };
 
-  const handleChangeGroup = (e, groupIndex, captionIndex = null, field) => {
-    const newGroups = [...groups];
-    if (captionIndex !== null) {
-      newGroups[groupIndex].captions[captionIndex][field] = e.target.value;
-    } else {
-      newGroups[groupIndex][field] = e.target.value;
-    }
-    setGroups(newGroups);
+  const addGroup = () => {
+    setFormData({
+      ...formData,
+      groups: [...formData.groups, { g: "", cvPairs: [{ c: "", v: "" }] }],
+    });
   };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const [storedFormData, setStoredFormData] = useState(null);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(formData);
+    localStorage.setItem("formData", JSON.stringify(formData));
+    const storedFormData = JSON.parse(localStorage.getItem("formData"));
+    setStoredFormData(storedFormData);
     setSubmitted(true);
-    setValues(inputs.map((input) => ({ a: input.a, b: input.b })));
-    setGroups(
-      groups.map((group) => ({
-        title: group.title,
-        captions: group.captions.map((caption) => ({
-          c: caption.c,
-          v: caption.v,
-        })),
-      }))
-    );
   };
-
-  const handleDeleteInput = (index) => {
-    const newInputs = [...inputs];
-    newInputs.splice(index, 1);
-    setInputs(newInputs);
-  };
-
-  const handleDeleteGroup = (groupIndex) => {
-    const newGroups = [...groups];
-    newGroups.splice(groupIndex, 1);
-    setGroups(newGroups);
-  };
-
-  if (loading) {
-    return (
-      <>
-        <motion.div
-          className="flex justify-center items-center h-screen"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ease:"easeIn", duration: 4 }
-        }
-        >
-          <div className="flex flex-col justify-center items-center">
-            <div className="flex justify-center items-center">
-              <FontAwesomeIcon
-                icon={faSpinner}
-                className="animate-spin text-5xl text-slate-500"
-              />
-            </div>
-            <h1 className="text-2xl font-bold mt-2">Final Exam</h1>
-          </div>
-        </motion.div>
-      </>
-    );
-  }
-
   return (
     <>
       <nav className="flex justify-between items-center bg-gray-100 p-3 px-10">
@@ -149,43 +171,60 @@ function DynamicForm() {
         Nested Dynamic Form Final Question
       </h1>
       <motion.div
-        className="sm:flex border-2 border-gray-300 container m-auto mt-2 mb-5"
+        className="sm:flex border-2 border-gray-300 container m-auto mt-2 mb-5 gap-3"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
       >
         <form className="form-wrapper sm:w-1/2" onSubmit={handleSubmit}>
-          {/* A&B */}
-          <section className="bg-gray-200 p-5 flex justify-center">
+          <section className="bg-gray-200 p-5 flex justify-center gap-3">
             <input
               type="text"
-              placeholder="example: Eye Clinic"
-              onChange={titleHandle}
-              value={title}
+              name="title"
+              placeholder="title"
+              value={formData.title}
+              onChange={handleChange}
               className="w-2/3 rounded-md border-2 border-gray-300 p-2 h-9 ml-8
               "
             />
+            <motion.button
+              type="button"
+              onClick={() => setFormData({ ...formData, title: "" })}
+              className="bg-red-600 text-white rounded-sm w-8 h-8 flex items-center justify-center relative top-2"
+              title="removeSlots"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              whileDrag={{ scale: 1.1 }}
+            >
+              <FontAwesomeIcon icon={faMinus} className="w-3" />
+            </motion.button>
           </section>
-          <h2 className="font-bold ml-36 py-2">A&B</h2>
+          <h1 className="font-bold ml-36 py-2">A&B</h1>
           <section className="bg-gray-200 p-5">
-            {inputs.map((input, index) => (
+            {formData.abPairs.map((pair, index) => (
               <div key={index} className="flex gap-5 justify-center">
                 <input
+                  type="text"
+                  name={`abPairs.${index}.a`}
                   placeholder={`A${index + 1}`}
-                  value={input.a}
-                  onChange={(e) => handleChange(e, index, "a")}
+                  value={pair.a}
+                  onChange={handleChange}
                   className="p-2 border-2 border-gray-300 rounded-md mb-3 w-1/4"
                 />
+
                 <input
+                  type="text"
+                  name={`abPairs.${index}.b`}
                   placeholder={`B${index + 1}`}
-                  value={input.b}
-                  onChange={(e) => handleChange(e, index, "b")}
+                  value={pair.b}
+                  onChange={handleChange}
                   className="p-2 border-2 border-gray-300 rounded-md mb-3 w-1/4"
                 />
                 <motion.button
                   type="button"
-                  onClick={() => handleDeleteInput(index)}
+                  onClick={() => deleteABPair(index)}
                   className="bg-red-600 text-white rounded-sm w-8 h-8 flex items-center justify-center relative top-2"
                   title="removeSlots"
                   whileHover={{ scale: 1.1 }}
@@ -198,50 +237,66 @@ function DynamicForm() {
               </div>
             ))}
             <motion.button
+              type="button"
+              onClick={addABPair}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               transition={{ duration: 0.2 }}
               whileDrag={{ scale: 1.1 }}
-              onClick={handleAddInput}
               className="bg-blue-600 text-white rounded-sm w-fit px-3 flex items-center relative top-2 left-[80%]"
             >
               Add A&B
             </motion.button>
           </section>
-          {/* groups */}
+          {/* groups section */}
           <h2 className="font-bold ml-36 py-2">Groups</h2>
           <section className="bg-gray-200 p-5">
-            {groups.map((group, groupIndex) => (
+            {formData.groups.map((group, groupIndex) => (
               <div key={groupIndex} className="bg-white w-full">
                 <div className="flex justify-center bg-gray-200">
                   <input
+                    type="text"
+                    name={`groups.${groupIndex}.g`}
                     placeholder={`G${groupIndex + 1}`}
-                    value={group.title}
-                    onChange={(e) =>
-                      handleChangeGroup(e, groupIndex, null, "title")
-                    }
+                    value={group.g}
+                    onChange={handleGroupChange}
                     className="w-[65%] rounded-md border-2 border-gray-300 p-2 h-9 ml-8 mb-3 "
                   />
                 </div>
+
+                {/* section for Captions within group */}
                 <h1 className="font-bold mb-3 ml-28">Captions</h1>
-                {group.captions.map((caption, captionIndex) => (
-                  <div key={captionIndex} className="flex gap-5 justify-center">
+                {group.cvPairs.map((pair, pairIndex) => (
+                  <div key={pairIndex} className="flex gap-5 justify-center">
                     <input
-                      placeholder={`C${captionIndex + 1}`}
-                      value={caption.c}
-                      onChange={(e) =>
-                        handleChangeGroup(e, groupIndex, captionIndex, "c")
-                      }
+                      type="text"
+                      name={`groups.${groupIndex}.cvPairs.${pairIndex}.c`}
+                      placeholder={`C${pairIndex + 1}`}
+                      value={pair.c}
+                      onChange={handleGroupChange}
                       className="p-2 rounded-md mb-3 w-1/4 bg-gray-200"
                     />
                     <input
-                      placeholder={`V${captionIndex + 1}`}
-                      value={caption.v}
-                      onChange={(e) =>
-                        handleChangeGroup(e, groupIndex, captionIndex, "v")
-                      }
+                      type="text"
+                      name={`groups.${groupIndex}.cvPairs.${pairIndex}.v`}
+                      placeholder={`V${pairIndex + 1}`}
+                      value={pair.v}
+                      onChange={handleGroupChange}
                       className="p-2 rounded-md mb-3 w-1/4 bg-gray-200"
                     />
+
+                    <motion.button
+                      type="button"
+                      onClick={() => deleteCVPair(groupIndex, pairIndex)}
+                      className="bg-red-600 text-white rounded-sm w-8 h-8 flex items-center justify-center relative top-2"
+                      title="removeSlots"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                      whileDrag={{ scale: 1.1 }}
+                    >
+                      <FontAwesomeIcon icon={faMinus} className="w-3" />
+                    </motion.button>
                   </div>
                 ))}
                 <motion.button
@@ -249,14 +304,14 @@ function DynamicForm() {
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.2 }}
                   whileDrag={{ scale: 1.1 }}
-                  onClick={() => handleAddCaption(groupIndex)}
+                  onClick={() => addCVPair(groupIndex)}
                   className="bg-blue-600 text-white rounded-sm w-fit px-3 flex items-center relative top-2 left-[80%] mb-5"
                 >
                   Add C&V
                 </motion.button>
 
                 <motion.button
-                  onClick={() => handleDeleteGroup(groupIndex)}
+                  onClick={() => deleteGroup(groupIndex)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.2 }}
@@ -268,7 +323,7 @@ function DynamicForm() {
               </div>
             ))}
             <motion.button
-              onClick={handleAddGroup}
+              onClick={addGroup}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               transition={{ duration: 0.2 }}
@@ -277,7 +332,6 @@ function DynamicForm() {
             >
               Add Group
             </motion.button>
-            {/* submission and displaying */}
           </section>
           <motion.button
             type="submit"
@@ -293,44 +347,38 @@ function DynamicForm() {
         <div className="display-screen p-5 w-1/2 border-2 border-black">
           <h1 className="text-2xl font-bold text-center">Form Output</h1>
           {submitted ? (
-            <div>
-              <h1 className="font-bold text-xl p-2">{title}</h1>
-
-              {values.length > 0 ? (
-                values.map((value, index) => (
-                  <div key={index} className="border-2 border-blue-600 p-2">
-                    <h1>{`A${index + 1}: ${value.a}`}</h1>
-                    <h1>{`B${index + 1}: ${value.b}`}</h1>
-                  </div>
-                ))
+            <>
+              {storedFormData ? (
+                <ul>
+                  <li>
+                    <h1 className="font-bold text-xl p-2">
+                      {storedFormData.title}{" "}
+                    </h1>
+                  </li>
+                  {storedFormData.abPairs.map((pair, index) => (
+                    <li key={index} className="font-semibold">
+                      AB Pair {index + 1}: {pair.a} {pair.b}
+                    </li>
+                  ))}
+                  {storedFormData.groups.map((group, index) => (
+                    <li key={index} className="font-semibold">
+                      Group {index + 1}: {group.g}
+                      <ul>
+                        {group.cvPairs.map((pair, index) => (
+                          <li key={index} className="font-semibold">
+                            CV Pair {index + 1}: {pair.c} {pair.v}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
               ) : (
-                <h1>No values are submitted!</h1>
+                <p>No stored form data found.</p>
               )}
-
-              {groups.length > 0 ? (
-                groups.map((group, groupIndex) => (
-                  <div key={groupIndex}>
-                    <h1 className="font-bold mb-2 mt-2">{`G${groupIndex + 1}: ${
-                      group.title
-                    }`}</h1>
-
-                    {group.captions.map((caption, captionIndex) => (
-                      <div
-                        key={captionIndex}
-                        className="border-2 border-blue-600 p-2"
-                      >
-                        <h1>{`C${captionIndex + 1}: ${caption.c}`}</h1>
-                        <h1>{`V${captionIndex + 1}: ${caption.v}`}</h1>
-                      </div>
-                    ))}
-                  </div>
-                ))
-              ) : (
-                <h1>No groups are submitted!</h1>
-              )}
-            </div>
+            </>
           ) : (
-            <h1>No values submitted yet</h1>
+            "null"
           )}
         </div>
       </motion.div>
