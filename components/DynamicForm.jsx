@@ -408,7 +408,7 @@ function DynamicForm() {
               )}
             </>
           ) : (
-            "null"
+            "No Items Submitted Yet"
           )}
         </div>
       </motion.div>
