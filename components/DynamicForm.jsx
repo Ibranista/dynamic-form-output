@@ -17,7 +17,13 @@ function DynamicForm() {
     abPairs: [{ a: "", b: "" }],
     groups: [{ g: "", cvPairs: [{ c: "", v: "" }] }],
   });
+  const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+  }, []);
   const handleChange = (event) => {
     const { name, value } = event.target;
     // split the name by '.' to get the keys for the formData object
@@ -132,12 +138,36 @@ function DynamicForm() {
   const [storedFormData, setStoredFormData] = useState(null);
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(formData);
     localStorage.setItem("formData", JSON.stringify(formData));
     const storedFormData = JSON.parse(localStorage.getItem("formData"));
     setStoredFormData(storedFormData);
     setSubmitted(true);
   };
+
+  // loader
+  if (loading) {
+    return (
+      <>
+        <motion.div
+          className="flex justify-center items-center h-screen"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ ease: "easeIn", duration: 4 }}
+        >
+          <div className="flex flex-col justify-center items-center">
+            <div className="flex justify-center items-center">
+              <FontAwesomeIcon
+                icon={faSpinner}
+                className="animate-spin text-5xl text-slate-500"
+              />
+            </div>
+            <h1 className="text-2xl font-bold mt-2">Final Exam</h1>
+          </div>
+        </motion.div>
+      </>
+    );
+  }
   return (
     <>
       <nav className="flex justify-between items-center bg-gray-100 p-3 px-10">
