@@ -387,11 +387,12 @@ function DynamicForm() {
                   </li>
                   {storedFormData.abPairs.map((pair, index) => (
                     <li key={index} className="font-semibold">
-                      {pair.a && (
-                        <>
-                          AB Pair {index + 1}: {pair.a} {pair.b}
-                        </>
-                      )}
+                      {pair.a ||
+                        (pair.b && (
+                          <>
+                            AB Pair {index + 1}: {pair.a} {pair.b}
+                          </>
+                        ))}
                     </li>
                   ))}
                   {storedFormData.groups.map((group, index) => (
@@ -404,11 +405,9 @@ function DynamicForm() {
                       <ul>
                         {group.cvPairs.map((pair, index) => (
                           <li key={index} className="font-semibold">
-                            {pair.c && pair.v && (
-                              <>
-                                CVV {index + 1}: {pair.v}
-                              </>
-                            )}
+                            <>
+                              CV pair: {index + 1}: {pair.c} {pair.v}
+                            </>
                           </li>
                         ))}
                       </ul>
